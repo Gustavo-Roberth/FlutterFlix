@@ -6,11 +6,14 @@ import 'package:flutter_flix/pages/movie_detail_page.dart';
 import 'package:flutter_flix/pages/mylist_page.dart';
 import 'package:flutter_flix/widgets/movie_card.dart';
 
+// Tela principal
+// Todos os filmes populares são apresentados aqui
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
+// Constroe a estrutura da tela principal
 class _HomePageState extends State<HomePage> {
   final _controller = MovieController();
   final _scrollController = ScrollController();
@@ -76,7 +79,9 @@ class _HomePageState extends State<HomePage> {
       actions: [
         IconButton(
           icon: _iconMylist,
-          onPressed: () {},
+          onPressed: () {
+            _openMyListPage();
+          },
         ),
         IconButton(
           icon: Icon(Icons.search),
@@ -112,7 +117,7 @@ class _HomePageState extends State<HomePage> {
     final movie = _controller.movies[index];
     return MovieCard(
       posterPath: movie.posterPath,
-      onTap: () {},
+      onTap: () => _openDetailPage(movie.id),
     );
   }
 
@@ -128,6 +133,19 @@ class _HomePageState extends State<HomePage> {
     if (deleted == true) {
       movies.removeAt(movieId);
     }
+    _getAllMovies();
+    _iconMyListColor();
+  }
+
+// Navegador para a Tela de Minha Lista de filmes favoritos contidos no Grid da Tela Principal
+// A Navegação acontece com ação de clique no ícone da Barra Superior
+  void _openMyListPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyListPage(),
+      ),
+    );
     _getAllMovies();
     _iconMyListColor();
   }
