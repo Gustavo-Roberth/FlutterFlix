@@ -35,4 +35,21 @@ class MovieController {
 
     return result;
   }
+
+  Future<Either<MovieError, MovieResponse>> searchMovies(String search,
+      {int page = 1}) async {
+    movieError = null;
+
+    final result = await _repository.searchMovies(search, page);
+    result.fold((error) => movieError = error, (movie) {
+      if (movieResponse == null) {
+        movieResponse = movie;
+      } else {
+        movieResponse.page = movie.page;
+        movieResponse.movies.addAll(movie.movies);
+      }
+    });
+
+    return result;
+  }
 }
