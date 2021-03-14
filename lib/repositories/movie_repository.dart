@@ -43,4 +43,27 @@ class MovieRepository {
       return Left(MovieRepositoryError(error.toString()));
     }
   }
+
+  Future<Either<MovieError, MovieResponse>> searchMovies(
+      String _search, int page) async {
+    try {
+      final response = await _dio.get('/search/movie?', queryParameters: {
+        'query': _search,
+        'language': kLanguage,
+        'page': page,
+        'include_adult': false
+      });
+      final model = MovieResponse.fromJson(response.data);
+      return Right(model);
+    } on DioError catch (error) {
+      if (error.response != null) {
+        return Left(
+            MovieRepositoryError(error.response.data['status_message']));
+      } else {
+        return Left(MovieRepositoryError(kServerError));
+      }
+    } on Exception catch (error) {
+      return Left(MovieRepositoryError(error.toString()));
+    }
+  }
 }
