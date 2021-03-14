@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flix/controllers/movie_detail_controller.dart';
+import 'package:flutter_flix/models/movie_model.dart';
 import 'package:flutter_flix/widgets/chip_date.dart';
 import 'package:flutter_flix/widgets/rate.dart';
 
+// Tela de detalhes de um filme
+// Todos os filmes são apresentados detalhadamente e individualmente aqui
 class MovieDetailPage extends StatefulWidget {
   final int movieId;
 
@@ -12,15 +15,25 @@ class MovieDetailPage extends StatefulWidget {
   _MovieDetailPageState createState() => _MovieDetailPageState();
 }
 
+// Constroe a estrutura da tela de detalhes de um filme
 class _MovieDetailPageState extends State<MovieDetailPage> {
   final _controller = MovieDetailController();
 
+  MovieHelper helper = MovieHelper();
+  List<int> idWishList = [];
+  List<Movie> wishList = [];
+
+  Icon _iconList = Icon(Icons.bookmark_border, color: Colors.white);
+
+// Força a inicialização da página com os dados relevantes
+// override para construção da inicialização do carregamento dos dados a serem apresentados
   @override
   void initState() {
     super.initState();
     _initialize();
   }
 
+// Carrega os dados dos campo da tela de detalhes e atributos dos ícones interativos
   _initialize() async {
     setState(() {
       _controller.loading = true;
@@ -28,11 +41,27 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
     await _controller.fetchMovieById(widget.movieId);
 
+    if (_controller.movieError == null) {
+      Movie movie = await helper.getMovie(_controller.movieDetail.id);
+
+      if (movie == null) {
+        setState(() {
+          _iconList = Icon(Icons.bookmark_border, color: Colors.white);
+        });
+      } else {
+        print(movie.id);
+        setState(() {
+          _iconList = Icon(Icons.bookmark, color: Colors.amber);
+        });
+      }
+    }
+
     setState(() {
       _controller.loading = false;
     });
   }
 
+// Chamada da barra superior e corpo do app
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +74,12 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   _buildAppBar() {
     return AppBar(
       title: Text(_controller.movieDetail?.title ?? ''),
-      actions: [],
+      actions: [
+        IconButton(
+          icon: _iconList,
+          onPressed: _onList,
+        ),
+      ],
     );
   }
 
@@ -100,5 +134,30 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           child: Text(_controller.movieDetail.overview,
               textAlign: TextAlign.left, style: TextStyle(fontSize: 17.0))),
     ]);
+  }
+
+// Realiza a construção da Minha Lista de filmes favoritos contidos no Grid da Tela Principal
+// Construção e controle da lista e ícone interativo
+// Ícone interativo de inserção de filmes na localizado na barra superior
+  Future<void> _onList() async {
+    Movie movie = await helper.getMovie(_controller.movieDetail.id);
+
+    if (movie == null) {
+      await helper.saveMovie(_controller.movieDetail);
+      Movie movie2 = await helper.getMovie(_controller.movieDetail.id);
+      if (movie2 != null) {
+        setState(() {
+          _iconList = Icon(Icons.bookmark, color: Colors.amber);
+        });
+      }
+    } else {
+      await helper.deleteMovie(_controller.movieDetail.id);
+      Movie movie2 = await helper.getMovie(_controller.movieDetail.id);
+      if (movie2 == null) {
+        setState(() {
+          _iconList = Icon(Icons.bookmark_border, color: Colors.white);
+        });
+      }
+    }
   }
 }

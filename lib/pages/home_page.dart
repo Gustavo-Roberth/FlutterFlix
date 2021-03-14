@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flix/controllers/movie_controller.dart';
 import 'package:flutter_flix/core/constant.dart';
+import 'package:flutter_flix/models/movie_model.dart';
 import 'package:flutter_flix/pages/movie_detail_page.dart';
 import 'package:flutter_flix/widgets/movie_card.dart';
 
@@ -14,6 +15,15 @@ class _HomePageState extends State<HomePage> {
   final _scrollController = ScrollController();
   int lastPage = 1;
 
+  MovieHelper helper = MovieHelper();
+  List<Movie> movies = [];
+
+  Icon _iconMylist = Icon(Icons.favorite_border, color: Colors.white);
+
+  List<Movie> historial = [];
+
+// Força a inicialização da página com os dados relevantes
+// override para construção da inicialização do Scroll infinito de cards, e carregamento dos dados a serem apresentados
   @override
   void initState() {
     super.initState();
@@ -43,6 +53,8 @@ class _HomePageState extends State<HomePage> {
 
     await _controller.fetchAllMovies(page: lastPage);
 
+    _getAllMovies();
+
     setState(() {
       _controller.loading = false;
     });
@@ -63,7 +75,7 @@ class _HomePageState extends State<HomePage> {
       title: Text(kAppName),
       actions: [
         IconButton(
-          icon: Icon(Icons.favorite, color: Colors.white),
+          icon: _iconMylist,
           onPressed: () {},
         ),
         IconButton(
@@ -95,6 +107,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Constroe o card de filme do Grid da Tela principal
   Widget _buildMovieCard(BuildContext context, int index) {
     final movie = _controller.movies[index];
     return MovieCard(
@@ -103,12 +116,26 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+// Navegador para a Tela de detalhes do filme contido no GRID
+// A Navegação acontece com ação de pressionamento no Card do Grid
   _openDetailPage(int movieId) async {
-    await Navigator.push(
+    final bool deleted = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MovieDetailPage(movieId),
       ),
     );
+    if (deleted == true) {
+      movies.removeAt(movieId);
+    }
+  }
+
+// Realiza a atualização de todos os filmes na estrutura de lista de favoritos
+  void _getAllMovies() {
+    helper.getAllMovies().then((list) {
+      setState(() {
+        movies = list;
+      });
+    });
   }
 }
