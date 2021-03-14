@@ -4,6 +4,7 @@ import 'package:flutter_flix/core/constant.dart';
 import 'package:flutter_flix/models/movie_model.dart';
 import 'package:flutter_flix/pages/movie_detail_page.dart';
 import 'package:flutter_flix/pages/mylist_page.dart';
+import 'package:flutter_flix/pages/search_page.dart';
 import 'package:flutter_flix/widgets/movie_card.dart';
 
 // Tela principal
@@ -85,7 +86,9 @@ class _HomePageState extends State<HomePage> {
         ),
         IconButton(
           icon: Icon(Icons.search),
-          onPressed: () {},
+          onPressed: () {
+            showSearch(context: context, delegate: SearchPage());
+          },
         ),
         IconButton(
           icon: Icon(Icons.refresh),
