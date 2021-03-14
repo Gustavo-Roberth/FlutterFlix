@@ -5,6 +5,8 @@ import 'package:flutter_flix/models/movie_model.dart';
 import 'package:flutter_flix/pages/movie_detail_page.dart';
 import 'package:flutter_flix/pages/mylist_page.dart';
 import 'package:flutter_flix/pages/search_page.dart';
+import 'package:flutter_flix/widgets/centered_message.dart';
+import 'package:flutter_flix/widgets/centered_progress.dart';
 import 'package:flutter_flix/widgets/movie_card.dart';
 
 // Tela principal
@@ -100,6 +102,14 @@ class _HomePageState extends State<HomePage> {
 
 // Constroe o corpo do app com uma Grid de cards de itens
   _buildMovieGrid() {
+    if (_controller.loading) {
+      return CenteredProgress();
+    }
+
+    if (_controller.movieError != null) {
+      return CenteredMessage(message: _controller.movieError.message);
+    }
+
     return GridView.builder(
       shrinkWrap: true,
       controller: _scrollController,
