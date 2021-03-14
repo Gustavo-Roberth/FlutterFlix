@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flix/controllers/movie_detail_controller.dart';
 import 'package:flutter_flix/models/movie_model.dart';
+import 'package:flutter_flix/widgets/centered_message.dart';
+import 'package:flutter_flix/widgets/centered_progress.dart';
 import 'package:flutter_flix/widgets/chip_date.dart';
 import 'package:flutter_flix/widgets/rate.dart';
 
@@ -85,6 +87,14 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
 // Constroe o corpo da página com uma imagem do filme e informações relevantes
   _buildMovieDetail() {
+    if (_controller.loading) {
+      return CenteredProgress();
+    }
+
+    if (_controller.movieError != null) {
+      return CenteredMessage(message: _controller.movieError.message);
+    }
+
     return ListView(
       children: [
         _buildCover(),

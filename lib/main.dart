@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flix/core/constant.dart';
+import 'package:flutter_flix/core/theme_app.dart';
 import 'package:flutter_flix/pages/home_page.dart';
 
 void main() {
@@ -11,9 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: kAppName,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: kThemeApp,
       home: HomePage(),
     );
   }
