@@ -1,5 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter_flix/models/genre_model.dart';
+import 'package:flutter_flix/models/production_company_model.dart';
+import 'package:flutter_flix/models/production_country_model.dart';
+import 'package:flutter_flix/models/spoken_language_model.dart';
+
 MovieDetail movieDetailMFromJson(String str) =>
     MovieDetail.fromJson(json.decode(str));
 
