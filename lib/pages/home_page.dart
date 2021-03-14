@@ -3,6 +3,7 @@ import 'package:flutter_flix/controllers/movie_controller.dart';
 import 'package:flutter_flix/core/constant.dart';
 import 'package:flutter_flix/models/movie_model.dart';
 import 'package:flutter_flix/pages/movie_detail_page.dart';
+import 'package:flutter_flix/pages/mylist_page.dart';
 import 'package:flutter_flix/widgets/movie_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,8 +20,6 @@ class _HomePageState extends State<HomePage> {
   List<Movie> movies = [];
 
   Icon _iconMylist = Icon(Icons.favorite_border, color: Colors.white);
-
-  List<Movie> historial = [];
 
 // Força a inicialização da página com os dados relevantes
 // override para construção da inicialização do Scroll infinito de cards, e carregamento dos dados a serem apresentados
@@ -54,6 +53,7 @@ class _HomePageState extends State<HomePage> {
     await _controller.fetchAllMovies(page: lastPage);
 
     _getAllMovies();
+    _iconMyListColor();
 
     setState(() {
       _controller.loading = false;
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
     final movie = _controller.movies[index];
     return MovieCard(
       posterPath: movie.posterPath,
-      onTap: () => _openDetailPage(movie.id),
+      onTap: () {},
     );
   }
 
@@ -127,6 +127,21 @@ class _HomePageState extends State<HomePage> {
     );
     if (deleted == true) {
       movies.removeAt(movieId);
+    }
+    _getAllMovies();
+    _iconMyListColor();
+  }
+
+// Configura so atributos do ícone da Lista de filmes favoritos da Tela Principal
+  void _iconMyListColor() {
+    if (movies.length > 0) {
+      setState(() {
+        _iconMylist = Icon(Icons.favorite, color: Colors.amber);
+      });
+    } else {
+      setState(() {
+        _iconMylist = Icon(Icons.favorite_border, color: Colors.white);
+      });
     }
   }
 
